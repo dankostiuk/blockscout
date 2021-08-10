@@ -151,9 +151,9 @@ defmodule Indexer.Fetcher.InternalTransaction do
     end
   end
 
-  defp fetch_block_internal_transactions_by_transactions(unique_numbers, json_rpc_named_arguments) do
+  defp fetch_block_internal_transactions_by_transactions(unique_numbers, _json_rpc_named_arguments) do
     Enum.reduce(unique_numbers, {:ok, []}, fn
-      block_number, {:ok, acc_list} ->
+      block_number, {:ok, _acc_list} ->
         block_number
         |> Chain.get_transactions_of_block_number()
         |> Enum.map(&params(&1))
@@ -161,18 +161,19 @@ defmodule Indexer.Fetcher.InternalTransaction do
           [] ->
             {:ok, []}
 
-          transactions ->
-            try do
-              EthereumJSONRPC.fetch_internal_transactions(transactions, json_rpc_named_arguments)
-            catch
-              :exit, error ->
-                {:error, error}
-            end
+# Removed until we have debug_traceTransaction on polygon-sdk
+#          transactions ->
+#            try do
+#              EthereumJSONRPC.fetch_internal_transactions(transactions, json_rpc_named_arguments)
+#            catch
+#              :exit, error ->
+#                {:error, error}
+#            end
         end
-        |> case do
-          {:ok, internal_transactions} -> {:ok, internal_transactions ++ acc_list}
-          error_or_ignore -> error_or_ignore
-        end
+##        |> case do
+#          {:ok, internal_transactions} -> {:ok, internal_transactions ++ acc_list}
+#          error_or_ignore -> error_or_ignore
+#        end
 
       _, error_or_ignore ->
         error_or_ignore
