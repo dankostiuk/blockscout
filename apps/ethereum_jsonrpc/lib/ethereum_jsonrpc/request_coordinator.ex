@@ -83,7 +83,6 @@ defmodule EthereumJSONRPC.RequestCoordinator do
         :ok ->
           trace_request(request, fn ->
             request
-            |> IO.inspect
             |> transport.json_rpc(transport_options)
             |> handle_transport_response()
           end)
